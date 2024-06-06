@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/addRecipe.css">
+    <title>Add Recipe</title>
+</head>
+<body>
+    <form id="addRecipeForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+        <br>
+        <label for="description">Description:</label>
+        <input type="text" id="description" name="description" required>
+        <br>
+        <button type="submit">Add Recipe</button>
+    </form>
+
+    <script>
+        document.getElementById('addRecipeForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const name = document.getElementById('name').value;
+            const description = document.getElementById('description').value;
+
+            try {
+                const response = await fetch('http://localhost:3000/addRecipe', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, description })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+
+                const data = await response.json();
+                console.log('Success:', data);
+                alert('Recipe added successfully');
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to add recipe');
+            }
+        });
+    </script>
+</body>
+</html>
