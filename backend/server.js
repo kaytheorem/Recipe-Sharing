@@ -5,7 +5,7 @@ const connection = require("./db");
 
 const app = express();
 // Define a port for the server to listen on
-const PORT = process.env.PORT || 3000;
+const PORT =       process.env.PORT || 3000;
 
 // Middleware
 app.use(cors());
@@ -14,7 +14,7 @@ app.use(express.json());
 // Define routes
 
 app.post("/addRecipe",(req,res)=>{
-    const {name , description} = req.body;
+    const {name ,   description} = req.body;
     
     const query = 'INSERT INTO recipes (name, description) VALUES (?, ?)';
     connection.query(query, [name, description], (error, results) => {
@@ -22,7 +22,7 @@ app.post("/addRecipe",(req,res)=>{
             console.error('Error inserting data:', error.message);
             return res.status(500).json({ error: 'Internal Server Error' });
         }
-        res.status(201).json({ message: 'Recipe added successfully', recipeId: results.insertId });
+        res.status(201).json({ message: 'Recipe added successfully',     recipeId: results.insertId });
     }); 
 })
 
