@@ -1,40 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Recipes - Recipe Sharing Platform</title>
-    <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="./css/recipe.css" />
 </head>
 <body>
-    <header>
-        <h1>Recipe Sharing Platform</h1>
-        <nav>
+    <header class="header">
+        <div class="logo">
+            <a href="/">Recipe Sharing Platform</a>
+        </div>
+        <nav class="header-icons">
             <ul>
-                <li><a href="/">Home</a></li>
-                <li><a href="/auth/login">Login</a></li>
-                <li><a href="/auth/register">Register</a></li>
-                <li><a href="/recipes/add">Add Recipe</a></li>
+                <li><a href="./about.html">About</a></li>
+                <li><a href="./reviews.html">Reviews</a></li>
+                <li><a href="./recipes.html">Recipes</a></li>
+                <li><a href="./add-recipe.html">Add Recipe</a></li>
             </ul>
         </nav>
     </header>
-    <main>
-        <h2>Recipes</h2>
-        <ul id="recipeList"></ul>
+    <main class="container">
+        <nav class="side_navbar">
+            <span>Menu</span>
+            <div class="links">
+                <a href="/">Home</a>
+                <a href="/auth/login">Login</a>
+                <a href="/auth/register">Register</a>
+                <a href="/recipes" class="active">Recipes</a>
+                <a href="./add-recipe.html">Add Recipe</a>
+            </div>
+        </nav>
+        <section class="main-body">
+            <h2>Recipes</h2>
+            <div id="recipeList" class="history_lists"></div>
+        </section>
     </main>
-    <script src="/scripts.js"></script>
+
     <script>
-        // Fetch recipes from the backend and display them
-        fetch('/recipes')
-            .then(response => response.json())
-            .then(data => {
-                const recipeList = document.getElementById('recipeList');
-                data.forEach(recipe => {
-                    const listItem = document.createElement('li');
-                    listItem.textContent = `${recipe.name} - ${recipe.description}`;
-                    recipeList.appendChild(listItem);
+        const recipeList = document.getElementById("recipeList");
+
+        async function fetchData() {
+            const response = await fetch("http://localhost:3000/recipe");
+            const recipeResponse = await response.json();
+
+            recipeResponse.forEach((recipe) => {
+                const recipeCard = document.createElement("div");
+                recipeCard.classList.add("recipe-card");
+
+                // Delete button
+                const deleteButton = document.createElement("button");
+                deleteButton.textContent = "Delete"; // Set button text
+                deleteButton.classList.add("delete-button");
+                deleteButton.addEventListener("click", async () => {
+                    const response = await fetch(`http://localhost:3000/delete`, {
+                        method: "DELETE",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ id: recipe.id }),
+                    });
+                    if (response.ok) {
+                        recipeCard.remove();
+                    }
                 });
+
+                recipeCard.innerHTML = `
+                    <p><strong>Name :</strong> ${recipe.name}</p>
+                    <p><strong>Description :</strong> ${recipe.description}</p>
+                `;
+                recipeCard.appendChild(deleteButton);
+                recipeList.appendChild(recipeCard);
             });
+        }
+        fetchData();
     </script>
 </body>
 </html>
